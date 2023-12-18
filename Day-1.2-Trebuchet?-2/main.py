@@ -17,9 +17,7 @@ def is_number_probable(possible_numbers, number):
     for possible_number in possible_numbers:
         if possible_number.startswith(number):
             number_is_probable = True
-            print(number, possible_number, number_is_probable)
             return number_is_probable
-        print(number, possible_number, number_is_probable)
 
     return number_is_probable
 
@@ -32,8 +30,6 @@ def main(path):
 
     numbers = []
     for line in lines:
-        line = "seightwoone8qxcfgszninesvfcnxc68"
-        print(line)
         first_number = None
         second_number = None
         number = ''
@@ -52,17 +48,24 @@ def main(path):
                 for possible_number in possible_numbers:
                     if possible_number.startswith(number):
                         number_is_probable = True
-                    print(number, possible_number, number_is_probable)
 
                 if not number_is_probable:
                     for possible_number in possible_numbers:
                         if possible_number.startswith(number):
                             number = char
-                            print(number, possible_number, True)
 
                 if not number_is_probable:
-                    # TODO: what happens if the number[-2] or [-3] or [-n] data should be used for another number
-                    number = number[-1]
+
+                    number_is_probable = False
+                    for i in range(len(number)):
+                        maybe_number_from_previous = number[i: len(number)]
+                        if is_number_probable(possible_numbers, number[i: len(number)]):
+                            number = number[i: len(number)]
+                            number_is_probable = True
+                            break
+
+                    if not number_is_probable:
+                        number = number[-1]
 
                 if number in possible_numbers:
                     if first_number is None:
@@ -71,26 +74,13 @@ def main(path):
                         second_number = possible_numbers.index(number) + 1
                     number = number[-1]
 
-            print("Char", char)
-            print("first number", first_number)
-            print("second number", second_number)
-            print("number", number)
-            print("#####")
-
         if first_number is None:
-            print("No numbers found in line")
-            print(line)
             break
 
         if second_number is None:
             second_number = first_number
 
         numbers.append(int(str(first_number) + str(second_number)))
-        print(numbers[-1])
-
-        break
-
-
 
     print(sum(numbers))
 
